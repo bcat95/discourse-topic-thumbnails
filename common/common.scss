@@ -2,7 +2,7 @@
 .topic-thumbnails-grid,
 .topic-thumbnails-masonry {
   .topic-list-thumbnail {
-    background: $primary-low;
+    background: var(--primary-low);
     position: relative;
     float: left;
     margin-right: 10px;
@@ -35,7 +35,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: $secondary;
+      background: var(--secondary);
       opacity: 0.4;
     }
 
@@ -52,7 +52,7 @@
       height: 100%;
       position: absolute;
       z-index: 2;
-      color: $primary-medium;
+      color: var(--primary-medium);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -96,8 +96,8 @@
     grid-template-rows: 1fr auto;
     grid-template-columns: 1fr auto;
 
-    background-color: $primary-low;
-    border: 1px solid $primary-low;
+    background-color: var(--primary-low);
+    border: 1px solid var(--primary-low);
 
     &.selected,
     &.last-visit.selected {
@@ -125,7 +125,7 @@
   .posters {
     z-index: 2;
     position: relative;
-    background-color: rgba($primary-very-low, 0.85);
+    background-color: rgba(var(--primary-low-rgb), 0.85);
     max-width: none;
   }
 
@@ -187,35 +187,58 @@
   }
 }
 
-.topic-thumbnails-masonry {
-  /*
+	@supports (grid-template-rows: masonry) {
+  .topic-thumbnails-masonry {
+    tbody {
+      grid-template-rows: masonry;
+    }
+    tr {
+      height: auto;
+    }
+    .topic-list-thumbnail {
+      float: none;
+      width: 100%;
+      min-height: 150px;
+      max-height: 500px;
+      .background-thumbnail {
+        display: absolute;
+        height: calc(200%);
+      }
+      .main-thumbnail {
+        position: relative;
+        width: 100%;
+        max-height: 100%;
+      }
+    }
+  }
+}
+@supports not (grid-template-rows: masonry) {
+  .topic-thumbnails-masonry {
+    /*
     Variables set by javascript:
     --masonry-num-columns
     --masonry-tallest-column
     --masonry-grid-spacing
     --masonry-column-width
   */
-
-  position: relative;
-  height: var(--masonry-tallest-column);
-
-  .topic-list-item {
-    /*
+    position: relative;
+    height: var(--masonry-tallest-column);
+    .topic-list-item {
+      /*
       Variables set by javascript:
       --masonry-height 
       --masonry-height-above  
       --masonry-column-index
     */
-
-    position: absolute;
-
-    height: var(--masonry-height);
-    width: var(--masonry-column-width);
-
-    left: calc(
-      (var(--masonry-column-width) + var(--masonry-grid-spacing)) *
-        var(--masonry-column-index)
-    );
-    top: var(--masonry-height-above);
+      position: absolute;
+      height: var(--masonry-height);
+      width: var(--masonry-column-width);
+      left: calc(
+        (var(--masonry-column-width) + var(--masonry-grid-spacing)) *
+          var(--masonry-column-index)
+      );
+      top: var(--masonry-height-above);
+    }
   }
 }
+
