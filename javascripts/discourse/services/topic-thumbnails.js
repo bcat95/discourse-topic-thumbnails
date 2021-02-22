@@ -15,8 +15,20 @@ const masonryCategories = settings.masonry_categories
   .split("|")
   .map((id) => parseInt(id, 10));
 
+const listTags = settings.list_tags.split("|");
+const gridTags = settings.grid_tags.split("|");
+const masonryTags = settings.masonry_tags.split("|");
+
 export default Service.extend({
   router: service("router"),
+
+  @discourseComputed("router.currentRouteName")
+  isTopicListRoute(currentRouteName) {
+    return (
+      currentRouteName.match(/^discovery\./) ||
+      currentRouteName.match(/^tags?\.show/)
+    );
+  },
 
   @discourseComputed(
     "router.currentRouteName",
@@ -28,10 +40,26 @@ export default Service.extend({
   },
 
   @discourseComputed(
-    "viewingCategoryId",
-    "router.currentRoute.metadata.customThumbnailMode"
+    "router.currentRouteName",
+    "router.currentRoute.attributes.id"
   )
-  displayMode(viewingCategoryId, customThumbnailMode) {
+  viewingTagId(currentRouteName, tagId) {
+    if (!currentRouteName.match(/^tags?\.show/)) return;
+    return tagId;
+  },
+
+  @discourseComputed(
+    "viewingCategoryId",
+    "viewingTagId",
+    "router.currentRoute.metadata.customThumbnailMode",
+    "isTopicListRoute"
+  )
+  displayMode(
+    viewingCategoryId,
+    viewingTagId,
+    customThumbnailMode,
+    isTopicListRoute
+  ) {
     if (customThumbnailMode) return customThumbnailMode;
 
     if (masonryCategories.includes(viewingCategoryId)) {
@@ -40,8 +68,16 @@ export default Service.extend({
       return "grid";
     } else if (listCategories.includes(viewingCategoryId)) {
       return "list";
-    } else {
+    } else if (masonryTags.includes(viewingTagId)) {
+      return "masonry";
+    } else if (gridTags.includes(viewingTagId)) {
+      return "grid";
+    } else if (listTags.includes(viewingTagId)) {
+      return "list";
+    } else if (isTopicListRoute || settings.enable_outside_topic_lists) {
       return settings.default_thumbnail_mode;
+    } else {
+      return "none";
     }
   },
 
